@@ -21,6 +21,7 @@ import os
 class InstResource(Page, RichText, AbstractResource):
     class Meta:
         verbose_name = 'REHESsys Instance Resource'
+    #object_id = models.PositiveIntegerField()
     name = models.CharField(max_length=50)
     git_repo = models.URLField()
     git_username = models.CharField(max_length=50)
@@ -51,7 +52,9 @@ def rhessys_post_trigger(sender, **kwargs):
         resource = kwargs['resource']
         files = resource.files.all()
         # Assume only one file in files, and that that file is a zipfile
-        zfile = zipfile.ZipFile(files[0].resource_file.open())
+        infile = files[0].resource_file
+        infile.open('rb')
+        zfile = zipfile.ZipFile(infile)
 
         # Get list of files in zipfile
         zlist = zfile.namelist()
