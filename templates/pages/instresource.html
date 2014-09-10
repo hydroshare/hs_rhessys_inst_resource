@@ -1,0 +1,12 @@
+{% extends "pages/genericresource.html" %}
+{% load geoanalytics_tags pages_tags mezzanine_tags crispy_forms_tags%}
+
+{% block extra_content %}
+    <h4> Input REHESsys instance resource parameters</h4>
+
+    <form method="post" action=".">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" value="Run model"/>
+    </form>
+{% endblock %}
