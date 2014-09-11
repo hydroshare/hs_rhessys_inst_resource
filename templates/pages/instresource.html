@@ -4,7 +4,7 @@
 {% block extra_content %}
     <h4> Input RHESSys instance resource parameters</h4>
 
-    <form method="post" action=".">
+    <form method="post" action="." style="padding-top:0.3em">
         {% csrf_token %}
         {{ form|crispy }}
         <input type="submit" value="Run model"/>
