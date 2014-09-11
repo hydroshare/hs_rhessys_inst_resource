@@ -90,15 +90,15 @@ def main_page(request, page):
         if(form.is_valid()):
             content_model = page.get_content_model()
             content_model.name=form.cleaned_data['name']
-            content_model.model_desc = form.cleaned_data['model_desc']
-            content_model.study_area_bbox = form.cleaned_data['study_area_bbox']
-            content_model.git_repo = form.cleaned_data['git_repo']
             content_model.git_username = form.cleaned_data['git_username']
             content_model.git_password = form.cleaned_data['git_password']
-            content_model.commit_id = form.cleaned_data['commit_id']
             content_model.git_branch = form.cleaned_data['git_branch']
             content_model.model_command_line_parameters = form.cleaned_data['model_command_line_parameters']
-            content_model.project_name = form.cleaned_data['project_name']
+            #content_model.project_name = form.cleaned_data['project_name']
+            #content_model.model_desc = form.cleaned_data['model_desc']
+            #content_model.study_area_bbox = form.cleaned_data['study_area_bbox']
+            #content_model.git_repo = form.cleaned_data['git_repo']
+            #content_model.commit_id = form.cleaned_data['commit_id']
             content_model.save()
     else:
         cm =page.get_content_model()
