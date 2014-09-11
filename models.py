@@ -20,8 +20,7 @@ import os
 
 class InstResource(Page, RichText, AbstractResource):
     class Meta:
-        verbose_name = 'REHESsys Instance Resource'
-    #object_id = models.PositiveIntegerField()
+        verbose_name = 'RHESSys Instance Resource'
     name = models.CharField(max_length=50)
     git_repo = models.URLField()
     git_username = models.CharField(max_length=50)
@@ -31,7 +30,7 @@ class InstResource(Page, RichText, AbstractResource):
     model_desc = models.CharField(max_length=500)
     git_branch = models.CharField(max_length=50)
     study_area_bbox = models.CharField(max_length = 50)
-    model_command_line_parameters = models.CharField(max_length=50)
+    model_command_line_parameters = models.CharField(max_length=500)
     project_name = models.CharField(max_length=100)
 
     def can_add(self, request):
@@ -102,6 +101,13 @@ def main_page(request, page):
             content_model.project_name = form.cleaned_data['project_name']
             content_model.save()
     else:
-        form = InputForm()
+        cm =page.get_content_model()
+        form = InputForm(initial={
+            'project_name' : cm.project_name,
+            'model_desc' : cm.model_desc,
+            'git_repo' : cm.git_repo,
+            'commit_id' : cm.commit_id,
+            'study_area_bbox' : cm.study_area_bbox
+        })
 
     return  {'form': form}
