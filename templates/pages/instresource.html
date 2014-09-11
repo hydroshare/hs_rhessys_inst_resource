@@ -4,9 +4,10 @@
 {% block extra_content %}
     <h4> Input RHESSys instance resource parameters</h4>
 
-    <form method="post" action="." style="padding-top:0.3em">
+    <form method="post" action="." style="padding-top:0.3em;padding-bottom: 0.5em;">
         {% csrf_token %}
         {{ form|crispy }}
-        <input type="submit" value="Run model"/>
+
+        <input type="submit" class="btn btn-primary" style="margin-top: 0.5em;" value="Run model"/>
     </form>
 {% endblock %}
