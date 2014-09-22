@@ -4,6 +4,11 @@ from django.db import models
 from mezzanine.pages.models import Page, RichText
 from mezzanine.core.models import Ownable
 from hs_core.models import AbstractResource, resource_processor
+from django_docker_processes import signals
+from django_docker_processes.models import DockerProcess
+from django_docker_processes.models import DockerProfile
+from django_docker_processes import tasks
+from django.shortcuts import get_object_or_404
 import django.dispatch
 from .forms import InputForm
 from mezzanine.pages.page_processors import processor_for
@@ -44,6 +49,22 @@ class InstResource(Page, RichText, AbstractResource):
 
     def can_view(self, request):
         return AbstractResource.can_view(self, request)
+
+    def when_my_process_ends(sender, instance, result_text=None, result_data=None, files=None, logs=None, **kw):
+        # make something out of the result data - result_data is a dict, result_text is plaintext
+        # files are UploadedFile instances
+        # logs are plain text stdout and stderr from the finished container
+        print "in when_my_process_ends"
+
+    def when_my_process_fails(sender, instance, error_text=None, error_data=None, logs=None, **kw):
+        # do something out of the error data
+        # error_data is a dict
+        # error_text is plain text
+        # logs are plain text stdout and stderr from the dead container
+        print "in when_my_process_fails"
+
+    finished = signals.process_finished.connect(when_my_process_ends, weak=False)
+    error_handler = signals.process_aborted.connect(when_my_process_fails, weak=False)
 
 @receiver(post_create_resource)
 def rhessys_post_trigger(sender, **kwargs):
@@ -100,6 +121,14 @@ def main_page(request, page):
             #content_model.git_repo = form.cleaned_data['git_repo']
             #content_model.commit_id = form.cleaned_data['commit_id']
             content_model.save()
+
+            my_profile = get_object_or_404(DockerProfile, name='RHESSys_Docker_Profile')
+            process = DockerProcess.objects.create(profile=my_profile) # creates a unique ID
+            promise = tasks.run_process.apply_async(process, [])
+            logs = promise.get()
+            print logs
+            process.delete() # no reason to leave it hanging around in the database
+
     else:
         cm =page.get_content_model()
         form = InputForm(initial={
