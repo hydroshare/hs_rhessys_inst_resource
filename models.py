@@ -124,7 +124,7 @@ def main_page(request, page):
 
             my_profile = get_object_or_404(DockerProfile, name='RHESSys_Docker_Profile')
             process = DockerProcess.objects.create(profile=my_profile) # creates a unique ID
-            promise = tasks.run_process.apply_async(process, [])
+            promise = tasks.run_process.apply_async(args=[process, {}])
             logs = promise.get()
             print logs
             process.delete() # no reason to leave it hanging around in the database
